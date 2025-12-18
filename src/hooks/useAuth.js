@@ -23,33 +23,37 @@ useEffect(() => {
 }, []);
 
 
-  const login = async (email, password) => {
-    try {
-      setLoading(true);
-      const response = await apiLogin(email, password);
-      
-      localStorage.setItem('token', response.access_token);
-      localStorage.setItem('user', JSON.stringify({
-        email: email,
-        role: response.role,
-        name: email.split('@')[0]
-      }));
-      
-      setUser({
-        email: email,
-        role: response.role,
-        name: email.split('@')[0]
-      });
-      
-      toast.success('Login successful!');
-      return response;
-    } catch (error) {
-      toast.error(error.message || 'Login failed');
-      throw error;
-    } finally {
-      setLoading(false);
-    }
-  };
+ const login = async (email, password) => {
+  try {
+    setLoading(true);
+    const response = await apiLogin(email, password);
+
+    // extract role correctly
+  const role = response.role; // ✅ now defined
+
+    localStorage.setItem('token', response.access_token);
+    localStorage.setItem('user', JSON.stringify({
+      email: email,
+      role,
+      name: email.split('@')[0]
+    }));
+
+    setUser({
+      email: email,
+      role,
+      name: email.split('@')[0]
+    });
+
+    toast.success('Login successful!');
+    return { ...response, role }; 
+  } catch (error) {
+    toast.error(error.message || 'Login failed');
+    throw error;
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   const logout = () => {
     localStorage.removeItem('token');

@@ -6,41 +6,35 @@ import toast from 'react-hot-toast';
 
 export default function Signup() {
   const [formData, setFormData] = useState({
-    name: '',
+    full_name: '',
     email: '',
     password: '',
-    confirmPassword: '',
-    role: 'candidate'
+    role: 'candidate' // hidden, default
   });
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
+    const { name, value } = e.target;
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [name]: value
     });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    if (formData.password !== formData.confirmPassword) {
-      toast.error('Passwords do not match');
-      return;
-    }
-    
+
     if (formData.password.length < 6) {
       toast.error('Password must be at least 6 characters');
       return;
     }
 
     setLoading(true);
-    
     try {
-      const { confirmPassword, ...signupData } = formData;
-      await signup(signupData);
-      
+      const { full_name, email, password, role } = formData;
+      await signup({ full_name, email, password, role });
+
       toast.success('Account created successfully! Please login.');
       navigate('/login');
     } catch (error) {
@@ -60,111 +54,67 @@ export default function Signup() {
           <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
             Create your account
           </h2>
-          <p className="mt-2 text-sm text-gray-600">
-            Join Remote Nomads today
-          </p>
+          <p className="mt-2 text-sm text-gray-600">Join Remote Nomads today</p>
         </div>
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-4">
+            {/* Full Name */}
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                Full Name
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
               <div className="relative">
                 <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                 <input
-                  id="name"
-                  name="name"
+                  name="full_name"
                   type="text"
                   required
-                  value={formData.name}
+                  value={formData.full_name}
                   onChange={handleChange}
-                  className="input-field pl-10"
                   placeholder="John Doe"
+                  className="input-field pl-10"
                 />
               </div>
             </div>
 
+            {/* Email */}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                Email Address
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                 <input
-                  id="email"
                   name="email"
                   type="email"
-                  autoComplete="email"
                   required
                   value={formData.email}
                   onChange={handleChange}
-                  className="input-field pl-10"
                   placeholder="you@example.com"
+                  className="input-field pl-10"
                 />
               </div>
             </div>
 
+            {/* Password */}
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-                Password
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                 <input
-                  id="password"
                   name="password"
                   type="password"
                   required
                   value={formData.password}
                   onChange={handleChange}
-                  className="input-field pl-10"
                   placeholder="At least 6 characters"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
-                Confirm Password
-              </label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                <input
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  type="password"
-                  required
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
                   className="input-field pl-10"
-                  placeholder="Confirm your password"
                 />
               </div>
-            </div>
-
-            <div>
-              <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-1">
-                I am a...
-              </label>
-              <select
-                id="role"
-                name="role"
-                value={formData.role}
-                onChange={handleChange}
-                className="input-field"
-              >
-                <option value="candidate">Job Seeker / Candidate</option>
-                <option value="recruiter">Recruiter / Employer</option>
-              </select>
             </div>
           </div>
 
+          {/* Terms */}
           <div className="flex items-center">
             <input
               id="terms"
-              name="terms"
               type="checkbox"
               required
               className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
@@ -181,6 +131,7 @@ export default function Signup() {
             </label>
           </div>
 
+          {/* Submit */}
           <button
             type="submit"
             disabled={loading}
@@ -196,6 +147,7 @@ export default function Signup() {
             )}
           </button>
 
+          {/* Login link */}
           <div className="text-center">
             <p className="text-sm text-gray-600">
               Already have an account?{' '}

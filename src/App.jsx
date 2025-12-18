@@ -9,6 +9,7 @@ import AdminDashboard from './Admin/AdminDashboard';
 import Home from './pages/Home';
 import Signup from './Auth/Signup';
 import { AuthProvider } from './context/AuthContext';
+import JobDetails from './Candidate/JobDetails';
 
 function App() {
   return (
@@ -38,6 +39,8 @@ function App() {
                 </ProtectedRoute>
               }
             />
+             <Route path="/jobs/:id" element={<JobDetails />} />
+
 
             <Route
               path="/admin"

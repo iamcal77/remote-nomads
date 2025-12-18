@@ -44,7 +44,7 @@ export const logout = () => {
 };
 
 export const signup = (userData) => {
-  return api.post('/auth/signup', userData);
+  return api.post('/auth/register', userData);
 };
 
 // Profile API
@@ -59,6 +59,10 @@ export const updateProfile = (profileData) => {
 // Jobs API
 export const getJobs = () => {
   return api.get('/jobs');
+};
+export const getJobById = async (id) => {
+  return  api.get(`/jobs/${id}`);
+  
 };
 
 export const getJob = (id) => {

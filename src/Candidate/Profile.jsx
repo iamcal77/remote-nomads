@@ -52,7 +52,7 @@ export default function Profile() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="max-w-4xl mx-auto mt-10 p-6 bg-white rounded-lg shadow">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">Profile Settings</h1>
         <p className="text-gray-600 mt-2">Update your personal and professional information</p>

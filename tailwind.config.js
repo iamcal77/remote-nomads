@@ -8,16 +8,16 @@ module.exports = {
     extend: {
       colors: {
         primary: {
-          50: '#eff6ff',
-          100: '#dbeafe',
-          200: '#bfdbfe',
-          300: '#93c5fd',
-          400: '#60a5fa',
-          500: '#3b82f6',
-          600: '#2563eb',
-          700: '#1d4ed8',
-          800: '#1e40af',
-          900: '#1e3a8a',
+         50: '#fef5f3',
+          100: '#fdeae5',
+          200: '#fbd5cc',
+          300: '#f9c0b3',
+          400: '#f69680',
+          500: '#f26c4d', // A midpoint between your oranges
+          600: '#e04e1a', // Your tr-primary-light
+          700: '#c13d18', // Your tr-primary
+          800: '#9a3114',
+          900: '#7d2810',
         },
       },
       fontFamily: {

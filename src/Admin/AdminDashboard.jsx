@@ -7,25 +7,7 @@ import { getDashboardStats } from '../utils/api';
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('users');
-  const [stats, setStats] = useState({
-    totalUsers: 0,
-    activeJobs: 0,
-    applications: 0,
-    fillRate: 0
-  });
 
-  useEffect(() => {
-    fetchStats();
-  }, []);
-
-  const fetchStats = async () => {
-    try {
-      const data = await getDashboardStats();
-      setStats(data);
-    } catch (error) {
-      console.error('Failed to fetch stats:', error);
-    }
-  };
 
   const tabs = [
     { id: 'users', label: 'User Management', icon: Users },
@@ -38,57 +20,6 @@ export default function AdminDashboard() {
       <div>
         <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
         <p className="text-gray-600 mt-2">Manage your platform and users</p>
-      </div>
-
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="card">
-          <div className="flex items-center">
-            <div className="p-3 bg-blue-100 rounded-lg">
-              <Users className="h-6 w-6 text-blue-600" />
-            </div>
-            <div className="ml-4">
-              <p className="text-sm text-gray-600">Total Users</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.totalUsers}</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="card">
-          <div className="flex items-center">
-            <div className="p-3 bg-green-100 rounded-lg">
-              <Briefcase className="h-6 w-6 text-green-600" />
-            </div>
-            <div className="ml-4">
-              <p className="text-sm text-gray-600">Active Jobs</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.activeJobs}</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="card">
-          <div className="flex items-center">
-            <div className="p-3 bg-purple-100 rounded-lg">
-              <FileText className="h-6 w-6 text-purple-600" />
-            </div>
-            <div className="ml-4">
-              <p className="text-sm text-gray-600">Applications</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.applications}</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="card">
-          <div className="flex items-center">
-            <div className="p-3 bg-orange-100 rounded-lg">
-              <TrendingUp className="h-6 w-6 text-orange-600" />
-            </div>
-            <div className="ml-4">
-              <p className="text-sm text-gray-600">Fill Rate</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.fillRate}%</p>
-            </div>
-          </div>
-        </div>
       </div>
 
       {/* Tabs */}
