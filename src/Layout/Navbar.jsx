@@ -28,7 +28,7 @@ export default function Navbar() {
       .slice(0, 2);
   };
 const handleClick = () => {
-  toast.success("Settings page is under construction.");
+  toast.success("Coming Sooon.");
 }
   return (
     <nav className="fixed top-0 left-0 w-full z-50" style={{
@@ -80,11 +80,15 @@ const handleClick = () => {
             {/* Notification & Messages (Desktop) */}
             {user && (
               <div className="hidden md:flex items-center space-x-2">
-                <button className="p-2 rounded-lg text-gray-300 hover:text-white hover:bg-white/5 transition-all relative">
+                <button 
+                onClick={handleClick}
+                className="p-2 rounded-lg text-gray-300 hover:text-white hover:bg-white/5 transition-all relative">
                   <Bell className="h-5 w-5" />
                   <span className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full border-2 border-[#1a2536]"></span>
                 </button>
-                <button className="p-2 rounded-lg text-gray-300 hover:text-white hover:bg-white/5 transition-all relative">
+                <button 
+                onClick={handleClick}
+                className="p-2 rounded-lg text-gray-300 hover:text-white hover:bg-white/5 transition-all relative">
                   <MessageSquare className="h-5 w-5" />
                   <span className="absolute -top-1 -right-1 h-3 w-3 bg-blue-500 rounded-full border-2 border-[#1a2536]"></span>
                 </button>
