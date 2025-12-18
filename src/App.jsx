@@ -7,9 +7,9 @@ import Profile from './Candidate/Profile';
 import JobsDashboard from './Candidate/JobsDashboard';
 import AdminDashboard from './Admin/AdminDashboard';
 import Home from './pages/Home';
-import Signup from './Auth/Signup';
 import { AuthProvider } from './context/AuthContext';
 import JobDetails from './Candidate/JobDetails';
+import Signup from './Auth/SignUp';
 
 function App() {
   return (
