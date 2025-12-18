@@ -77,7 +77,7 @@ export default function Home() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
-              to="/jobs"
+              to="/login"
               className="btn-primary py-3 px-8 text-lg flex items-center justify-center"
             >
               Browse Jobs
