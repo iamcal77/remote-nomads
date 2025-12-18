@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import Layout from './Layout/Layout';
+import PublicLayout from './Layout/PublicLayout';
 import ProtectedRoute from './Auth/ProtectedRoute';
 import Login from './Auth/Login';
 import Profile from './Candidate/Profile';
@@ -16,12 +17,15 @@ function App() {
     <AuthProvider>
       <Router>
         <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
+          {/* Public pages (NO navbar) */}
+          <Route element={<PublicLayout />}>
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+          </Route>
 
-          <Route path="/" element={<Layout />}>
-            <Route index element={<Home />} />
-
+          {/* App pages (WITH navbar) */}
+          <Route element={<Layout />}>
             <Route
               path="/profile"
               element={
@@ -39,8 +43,8 @@ function App() {
                 </ProtectedRoute>
               }
             />
-             <Route path="/jobs/:id" element={<JobDetails />} />
 
+            <Route path="/jobs/:id" element={<JobDetails />} />
 
             <Route
               path="/admin"
