@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Plus, Search, Edit, Trash2, Eye, Calendar, DollarSign, MapPin, Clock, Briefcase, Filter, Download, Users, ChevronDown } from 'lucide-react';
-import { getJobs, createJob, updateJob, deleteJob } from '../utils/api';
+import { getJobs, createJob, deleteJob, updateJobStatus } from '../utils/api';
 import toast from 'react-hot-toast';
 import JobForm from './JobForm';
 
@@ -90,26 +90,30 @@ export default function JobManagement() {
     setFilteredJobs(filtered);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    try {
-      const jobData = { ...jobForm };
-      if (editingJob) {
-        await updateJob(editingJob.id, jobData);
-        toast.success('Job updated successfully');
-      } else {
-        await createJob(jobData);
-        toast.success('Job created successfully');
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  
+  try {
+    const jobData = { ...jobForm };
+
+    if (editingJob) {
+      // If only status changed
+      if (jobData.status && jobData.status !== editingJob.status && Object.keys(jobData).length === 1) {
+        await updateJobStatus(editingJob.id, { status: jobData.status });
+        toast.success('Job status updated successfully');
       }
-      
-      setShowModal(false);
-      resetForm();
-      fetchJobs();
-    } catch (error) {
-      toast.error(error.message || 'Failed to save job');
+    } else {
+      await createJob(jobData);
+      toast.success('Job created successfully');
     }
-  };
+
+    setShowModal(false);
+    resetForm();
+    fetchJobs();
+  } catch (error) {
+    toast.error(error.message || 'Failed to save job');
+  }
+};
 
   const handleEdit = (job) => {
     setEditingJob(job);
@@ -121,7 +125,7 @@ export default function JobManagement() {
       salary_range: job.salary_range || '',
       description: job.description || '',
       industry: job.industry || '',
-      skills: job.skills?.join(', ') || '',
+      skills: Array.isArray(job.skills) ? job.skills.join(', ') : (job.skills || ''),
       expiry_date: job.expiry_date || '',
       status: job.status || 'draft'
     });

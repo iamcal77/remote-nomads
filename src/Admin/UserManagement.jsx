@@ -3,6 +3,7 @@ import { Plus, Search, Edit, Trash2, UserX, Filter, Download, Users } from 'luci
 import { getUsers, createUser, updateUser, deleteUser } from '../utils/api';
 import toast from 'react-hot-toast';
 import UserForm from './UserForm';
+import ConfirmDialog from '../components/ConfirmDialog';
 
 export default function UserManagement() {
   const [users, setUsers] = useState([]);
@@ -135,15 +136,27 @@ export default function UserManagement() {
   /* =========================
      DELETE USER
   ========================== */
-  const handleDelete = async (userId, fullName) => {
-    if (!window.confirm(`Delete ${fullName}? This action cannot be undone.`)) return;
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+ const openDeleteConfirm = (user) => {
+    setSelectedUser(user);
+    setConfirmOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!selectedUser) return;
 
     try {
-      await deleteUser(userId);
+      setLoading(true);
+      await deleteUser(selectedUser.id);
       toast.success('User deleted successfully');
       fetchUsers();
     } catch {
       toast.error('Failed to delete user');
+    } finally {
+      setLoading(false);
+      setConfirmOpen(false);
+      setSelectedUser(null);
     }
   };
 
@@ -201,7 +214,7 @@ export default function UserManagement() {
   };
 
   return (
-    <div className="space-y-6 p-4 md:p-6">
+    <div className="space-y-6 p-4 md:p-6 mt-0">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
@@ -404,7 +417,7 @@ export default function UserManagement() {
                           <Edit className="h-4 w-4 text-gray-600" />
                         </button>
                         <button
-                          onClick={() => handleDelete(user.id, user.full_name)}
+                         onClick={() => openDeleteConfirm(user)}
                           className="p-1.5 rounded-lg hover:bg-red-50 transition-colors"
                           title="Delete user"
                         >
@@ -470,6 +483,16 @@ export default function UserManagement() {
     </div>
   </div>
 )}
+ <ConfirmDialog
+        isOpen={confirmOpen}
+        title="Delete user"
+        message={`Delete ${selectedUser?.fullName}? This action cannot be undone.`}
+        confirmText="Delete"
+        confirmColor="bg-red-600 hover:bg-red-700"
+        onCancel={() => setConfirmOpen(false)}
+        onConfirm={handleConfirmDelete}
+        loading={loading}
+      />
 
 
     </div>

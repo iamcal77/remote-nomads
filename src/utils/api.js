@@ -52,9 +52,21 @@ export const getProfile = () => {
   return api.get('/candidates/profile');
 };
 
-export const updateProfile = (profileData) => {
-  return api.put('/candidates/profile', profileData);
+export const updateProfile = async (formData) => {
+  return api.post('/candidates/profile', formData);
 };
+
+
+// Get all applications for a specific job (admin)
+export const getApplications = () => {
+  return api.get('/applications');
+};
+
+// View / Download candidate CV (admin)
+export const downloadCv = (applicationId) => {
+  return `${API_BASE_URL}/applications/cv/${applicationId}`;
+};
+
 
 // Jobs API
 export const getJobs = () => {
@@ -73,8 +85,8 @@ export const createJob = (jobData) => {
   return api.post('/jobs', jobData);
 };
 
-export const updateJob = (id, jobData) => {
-  return api.put(`/jobs/${id}`, jobData);
+export const updateJobStatus = (id, jobData) => {
+  return api.put(`/jobs/${id}/status`, jobData);
 };
 
 export const deleteJob = (id) => {
@@ -100,10 +112,6 @@ export const updateUser = (id, userData) => {
 
 export const deleteUser = (id) => {
   return api.delete(`/users/${id}`);
-};
-
-export const getApplications = () => {
-  return api.get('/applications');
 };
 
 export const getDashboardStats = () => {

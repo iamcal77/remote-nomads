@@ -32,7 +32,22 @@ export default function JobForm({ jobForm, setJobForm, editingJob, onSubmit, onC
             placeholder="Remote Nomads Ltd"
           />
         </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Status *
+          </label>
+          <select
+            value={jobForm.status}
+            onChange={(e) => setJobForm({ ...jobForm, status: e.target.value })}
+            className="px-4 py-2 border border-gray-300 rounded-lg"
+          >
+            <option value="draft">Draft</option>
+            <option value="active">Active</option>
+            <option value="on_hold">On Hold</option>
+            <option value="filled">Filled</option>
+          </select>
 
+        </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Location

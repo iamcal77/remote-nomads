@@ -4,52 +4,76 @@ import { updateProfile, getProfile } from '../utils/api';
 import toast from 'react-hot-toast';
 
 export default function Profile() {
-  const [profile, setProfile] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    industry: '',
-    location: '',
-    salary: '',
-    skills: '',
-    experience: '',
-    education: ''
-  });
+ const [profile, setProfile] = useState({
+  full_name: '',
+  email: '',
+  industry: '',
+  timezone: '',
+  skills: '',
+  salary_expectation: '',
+  cv: null
+});
+
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     fetchProfile();
   }, []);
 
-  const fetchProfile = async () => {
-    try {
-      const data = await getProfile();
-      setProfile(data);
-    } catch (error) {
-      console.error('Failed to fetch profile:', error);
-    }
-  };
+const fetchProfile = async () => {
+  try {
+    const data = await getProfile();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    
-    try {
-      await updateProfile(profile);
-      toast.success('Profile updated successfully!');
-    } catch (error) {
-      toast.error('Failed to update profile');
-    } finally {
-      setLoading(false);
-    }
-  };
+    setProfile((prev) => ({
+      ...prev,
+      full_name: data.full_name || '',
+      email: data.email || '',
+      industry: data.industry || '',
+      timezone: data.timezone || '',
+      skills: data.skills || '',
+      salary_expectation: data.salary_expectation || ''
+    }));
+  } catch (error) {
+    console.error('Failed to fetch profile:', error);
+  }
+};
 
-  const handleChange = (e) => {
-    setProfile({
-      ...profile,
-      [e.target.name]: e.target.value
-    });
-  };
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setLoading(true);
+
+  try {
+    const formData = new FormData();
+    formData.append('full_name', profile.full_name);
+    formData.append('industry', profile.industry);
+    formData.append('timezone', profile.timezone);
+    formData.append('skills', profile.skills);
+    formData.append('salary_expectation', profile.salary_expectation);
+
+    if (profile.cv) {
+      formData.append('cv', profile.cv);
+    }
+
+    await updateProfile(formData);
+    toast.success('Profile updated successfully!');
+  } catch (error) {
+    toast.error('Failed to update profile');
+  } finally {
+    setLoading(false);
+  }
+};
+
+const handleChange = (e) => {
+  const { name, value } = e.target;
+  setProfile((prev) => ({ ...prev, [name]: value }));
+};
+
+const handleFileChange = (e) => {
+  if (e.target.files && e.target.files[0]) {
+    setProfile((prev) => ({ ...prev, cv: e.target.files[0] }));
+  }
+};
+
 
   return (
     <div className="max-w-4xl mx-auto mt-10 p-6 bg-white rounded-lg shadow">
@@ -69,12 +93,13 @@ export default function Profile() {
                 </label>
                 <input
                   type="text"
-                  name="name"
-                  value={profile.name}
+                  name="full_name"
+                  value={profile.full_name}
                   onChange={handleChange}
                   className="input-field"
                   placeholder="John Doe"
                 />
+
               </div>
 
               <div>
@@ -84,27 +109,11 @@ export default function Profile() {
                 </label>
                 <input
                   type="email"
-                  name="email"
                   value={profile.email}
-                  onChange={handleChange}
-                  className="input-field"
-                  placeholder="john@example.com"
+                  disabled
+                  className="input-field bg-gray-100"
                 />
-              </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  <Phone className="inline h-4 w-4 mr-1" />
-                  Phone Number
-                </label>
-                <input
-                  type="tel"
-                  name="phone"
-                  value={profile.phone}
-                  onChange={handleChange}
-                  className="input-field"
-                  placeholder="+1 (555) 123-4567"
-                />
               </div>
 
               <div>
@@ -118,23 +127,24 @@ export default function Profile() {
                   value={profile.industry}
                   onChange={handleChange}
                   className="input-field"
-                  placeholder="Software Development"
                 />
+
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   <MapPin className="inline h-4 w-4 mr-1" />
-                  Location
+                  Timezone
                 </label>
                 <input
                   type="text"
-                  name="location"
-                  value={profile.location}
+                  name="timezone"
+                  value={profile.timezone}
                   onChange={handleChange}
                   className="input-field"
-                  placeholder="San Francisco, CA"
+                  placeholder="EAT (UTC+3)"
                 />
+
               </div>
 
               <div>
@@ -144,12 +154,12 @@ export default function Profile() {
                 </label>
                 <input
                   type="text"
-                  name="salary"
-                  value={profile.salary}
+                  name="salary_expectation"
+                  value={profile.salary_expectation}
                   onChange={handleChange}
                   className="input-field"
-                  placeholder="$80,000 - $120,000"
                 />
+
               </div>
             </div>
 
@@ -162,9 +172,23 @@ export default function Profile() {
                 value={profile.skills}
                 onChange={handleChange}
                 className="input-field h-32"
-                placeholder="JavaScript, React, Node.js, Python..."
               />
+
               <p className="text-sm text-gray-500 mt-1">Separate skills with commas</p>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Upload CV
+              </label>
+              <input
+                type="file"
+                accept=".pdf,.doc,.docx"
+                onChange={handleFileChange}
+                className="input-field"
+              />
+              {profile.cv && (
+                <p className="text-sm text-gray-600 mt-1">Selected file: {profile.cv.name}</p>
+              )}
             </div>
 
             <button
@@ -187,24 +211,6 @@ export default function Profile() {
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2">
                 <div className="bg-green-500 h-2 rounded-full" style={{ width: '85%' }}></div>
-              </div>
-            </div>
-          </div>
-
-          <div className="card">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Stats</h3>
-            <div className="space-y-3">
-              <div className="flex justify-between">
-                <span className="text-gray-600">Jobs Applied</span>
-                <span className="font-medium">12</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Profile Views</span>
-                <span className="font-medium">48</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Response Rate</span>
-                <span className="font-medium">75%</span>
               </div>
             </div>
           </div>

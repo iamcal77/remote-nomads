@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { getJobById,applyJob } from "../utils/api";
+import { getJobById, applyJob } from "../utils/api";
 import { 
   Briefcase, MapPin, Clock, DollarSign, Calendar, 
   ArrowLeft, Globe, Users, Tag, CheckCircle, 
@@ -27,23 +27,51 @@ export default function JobDetails() {
       setJob(data);
     } catch (error) {
       console.error("Failed to fetch job:", error);
+      toast.error("Failed to load job details");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleApply = async (jobId, jobTitle) => {
+  const handleApply = async () => {
+    if (!job) return;
+    
     try {
-      await applyJob(jobId);
-      toast.success(`Applied for "${jobTitle}" successfully!`);
+      setApplying(true);
+      await applyJob(job.id);
+      toast.success(`Successfully applied for "${job.title}"!`);
       
-      // Update local state
-      setJob(job.map(job => 
-        job.id === jobId ? { ...job, hasApplied: true } : job
-      ));
+      // Update local state to reflect application
+      setJob(prev => ({ ...prev, hasApplied: true }));
     } catch (error) {
-      toast.error('Failed to apply for job');
+      console.error("Failed to apply:", error);
+      toast.error(error?.message || "Failed to apply for job");
+    } finally {
+      setApplying(false);
     }
+  };
+
+  const handleSaveJob = () => {
+    // Save job to localStorage or your backend
+    const savedJobs = JSON.parse(localStorage.getItem('savedJobs') || '[]');
+    if (saved) {
+      // Remove from saved
+      const updatedSavedJobs = savedJobs.filter(jobId => jobId !== id);
+      localStorage.setItem('savedJobs', JSON.stringify(updatedSavedJobs));
+      toast.success("Job removed from saved");
+    } else {
+      // Add to saved
+      savedJobs.push(id);
+      localStorage.setItem('savedJobs', JSON.stringify(savedJobs));
+      toast.success("Job saved successfully");
+    }
+    setSaved(!saved);
+  };
+
+  const handleShareJob = () => {
+    navigator.clipboard.writeText(window.location.href)
+      .then(() => toast.success("Link copied to clipboard!"))
+      .catch(() => toast.error("Failed to copy link"));
   };
 
   if (loading) {
@@ -106,7 +134,7 @@ export default function JobDetails() {
             
             <div className="flex items-center gap-3">
               <button
-                onClick={() => setSaved(!saved)}
+                onClick={handleSaveJob}
                 className={`p-2 rounded-lg transition-colors ${saved ? 'text-red-500' : 'text-gray-400 hover:text-gray-600'}`}
                 title={saved ? "Remove from saved" : "Save job"}
               >
@@ -120,21 +148,30 @@ export default function JobDetails() {
               <button
                 className="p-2 rounded-lg text-gray-400 hover:text-gray-600 transition-colors"
                 title="Share job"
-                onClick={() => navigator.clipboard.writeText(window.location.href)}
+                onClick={handleShareJob}
               >
                 <Share2 className="h-5 w-5" />
               </button>
               
               <button
                 onClick={handleApply}
-                disabled={applying}
+                disabled={applying || job.hasApplied}
                 className="px-6 py-2 text-white rounded-lg font-medium transition-all hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                 style={{
-                  background: 'linear-gradient(135deg, #c13d18 0%, #e04e1a 100%)',
-                  boxShadow: '0 4px 12px rgba(193, 61, 24, 0.25)'
+                  background: job.hasApplied 
+                    ? '#10B981' 
+                    : 'linear-gradient(135deg, #c13d18 0%, #e04e1a 100%)',
+                  boxShadow: job.hasApplied 
+                    ? '0 4px 12px rgba(16, 185, 129, 0.25)'
+                    : '0 4px 12px rgba(193, 61, 24, 0.25)'
                 }}
               >
-                {applying ? (
+                {job.hasApplied ? (
+                  <>
+                    <CheckCircle className="h-4 w-4" />
+                    Applied
+                  </>
+                ) : applying ? (
                   <>
                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
                     Applying...
@@ -338,10 +375,15 @@ export default function JobDetails() {
               <div className="space-y-3">
                 <button
                   onClick={handleApply}
-                  disabled={applying}
+                  disabled={applying || job.hasApplied}
                   className="w-full bg-white text-gray-900 hover:bg-gray-100 px-4 py-3 rounded-lg font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
-                  {applying ? (
+                  {job.hasApplied ? (
+                    <>
+                      <CheckCircle className="h-4 w-4" />
+                      Already Applied
+                    </>
+                  ) : applying ? (
                     <>
                       <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-900"></div>
                       Processing...
@@ -355,11 +397,20 @@ export default function JobDetails() {
                 </button>
                 
                 <button
-                  onClick={() => setSaved(!saved)}
+                  onClick={handleSaveJob}
                   className="w-full bg-transparent border-2 border-white text-white hover:bg-white/10 px-4 py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2"
                 >
-                  <Bookmark className="h-4 w-4" />
-                  {saved ? "Remove from Saved" : "Save for Later"}
+                  {saved ? (
+                    <>
+                      <Heart className="h-4 w-4 fill-current" />
+                      Remove from Saved
+                    </>
+                  ) : (
+                    <>
+                      <Bookmark className="h-4 w-4" />
+                      Save for Later
+                    </>
+                  )}
                 </button>
               </div>
               
