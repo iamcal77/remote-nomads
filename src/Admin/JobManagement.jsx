@@ -97,10 +97,9 @@ const handleSubmit = async (e) => {
     const jobData = { ...jobForm };
 
     if (editingJob) {
-      // If only status changed
-      if (jobData.status && jobData.status !== editingJob.status && Object.keys(jobData).length === 1) {
-        await updateJobStatus(editingJob.id, { status: jobData.status });
-        toast.success('Job status updated successfully');
+      if (jobData) {
+        await updateJobStatus(editingJob.id, jobData);
+        toast.success('Job updated successfully');
       }
     } else {
       await createJob(jobData);

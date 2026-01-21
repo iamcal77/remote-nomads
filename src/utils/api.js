@@ -62,11 +62,33 @@ export const getApplications = () => {
   return api.get('/applications');
 };
 
+export const viewCv = (applicationId) => {
+  const token = localStorage.getItem('token');
+  return `${API_BASE_URL}/applications/cv/${applicationId}/view?token=${token}`;
+};
 // View / Download candidate CV (admin)
 export const downloadCv = (applicationId) => {
-  return `${API_BASE_URL}/applications/cv/${applicationId}`;
+  const token = localStorage.getItem('token');
+  return `${API_BASE_URL}/applications/cv/${applicationId}/download?token=${token}`;
 };
 
+export const updateApplicationStatus = async (id, payload) => {
+  const token = localStorage.getItem('token');
+  const response = await fetch(`${API_BASE_URL}/applications/${id}/status`, {
+    method: 'PATCH', // or 'PUT' depending on your backend
+    headers: {
+      'Content-Type': 'application/json', // 👈 important
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify(payload), // 👈 ensure it's a stringified JSON
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to update status');
+  }
+
+  return response.json();
+};
 
 // Jobs API
 export const getJobs = () => {
@@ -86,7 +108,7 @@ export const createJob = (jobData) => {
 };
 
 export const updateJobStatus = (id, jobData) => {
-  return api.put(`/jobs/${id}/status`, jobData);
+  return api.put(`/jobs/${id}/jobs`, jobData);
 };
 
 export const deleteJob = (id) => {

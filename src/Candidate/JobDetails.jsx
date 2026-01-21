@@ -222,10 +222,11 @@ export default function JobDetails() {
                       </div>
                     </div>
                     
-                    <div className="bg-gradient-to-r from-[#c13d18] to-[#e04e1a] text-white px-4 py-2 rounded-lg font-semibold">
-                      ${job.salary_range?.replace(/[^0-9]/g, '') || "Competitive"}
-                      <span className="text-sm font-normal ml-1">/year</span>
-                    </div>
+                      <div className="bg-gradient-to-r from-[#c13d18] to-[#e04e1a] text-white px-4 py-2 rounded-lg font-semibold">
+                        {job.salary_range?.replace('-', ' - ') || "Competitive"}
+                        <span className="text-sm font-normal ml-1">/Monthly</span>
+                      </div>
+
                   </div>
                 </div>
               </div>
@@ -302,7 +303,7 @@ export default function JobDetails() {
                   <div>
                     <p className="text-sm text-gray-500">Posted Date</p>
                     <p className="font-medium text-gray-900">
-                      {new Date(job.posted_date).toLocaleDateString('en-US', {
+                      {new Date(job.created_at).toLocaleDateString('en-US', {
                         year: 'numeric',
                         month: 'long',
                         day: 'numeric'

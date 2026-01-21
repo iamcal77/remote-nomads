@@ -8,7 +8,7 @@ import {
   X,
   Eye
 } from 'lucide-react';
-import { getApplications, updateApplication, downloadCv } from '../utils/api';
+import { getApplications, downloadCv, viewCv,updateApplicationStatus } from '../utils/api';
 import toast from 'react-hot-toast';
 
 export default function CandidateReview() {
@@ -32,16 +32,19 @@ export default function CandidateReview() {
     try {
       setLoading(true);
       const data = await getApplications();
+      const allowedStatuses = ["pending", "reviewed", "shortlisted", "accepted", "rejected"];
 
       const normalized = data.map(app => ({
         id: app.application_id,
         job_id: app.job_id,
         job_title: app.job_title || 'N/A',
-        status: app.status,
+        status: allowedStatuses.includes(app.status) ? app.status : 'pending',
         applied_at: app.applied_at,
         candidate_name: app.full_name,
         candidate_email: app.email,
-        cv_url: app.cv_path ? downloadCv(app.application_id) : null
+        cv_view_url: app.cv_path ? viewCv(app.application_id) : null,
+        cv_download_url: app.cv_path ? downloadCv(app.application_id) : null
+
       }));
 
       setApplications(normalized);
@@ -74,7 +77,7 @@ export default function CandidateReview() {
 
   const updateStatus = async (applicationId, newStatus) => {
     try {
-      await updateApplication(applicationId, { status: newStatus });
+      await updateApplicationStatus(applicationId, { status: newStatus });
       setApplications(prev =>
         prev.map(app =>
           app.id === applicationId ? { ...app, status: newStatus } : app
@@ -86,28 +89,25 @@ export default function CandidateReview() {
     }
   };
 
-  const handleCvClick = (app) => {
-    if (app.cv_url) {
-      setSelectedCv({
-        url: app.cv_url,
-        name: `${app.candidate_name}-cv.pdf`,
-        candidateName: app.candidate_name,
-        jobTitle: app.job_title
-      });
-      setIsModalOpen(true);
-    }
-  };
+const handleCvClick = (app) => {
+  if (app.cv_view_url) {
+    setSelectedCv({
+      url: app.cv_view_url,
+      downloadUrl: app.cv_download_url,
+      candidateName: app.candidate_name,
+      jobTitle: app.job_title
+    });
+    setIsModalOpen(true);
+  }
+};
 
-  const handleDownload = async () => {
-    if (selectedCv) {
-      try {
-        await downloadCv(selectedCv.appId, selectedCv.name);
-        toast.success('CV downloaded successfully');
-      } catch {
-        toast.error('Failed to download CV');
-      }
-    }
-  };
+
+const handleDownload = () => {
+  if (selectedCv?.downloadUrl) {
+    window.open(selectedCv.downloadUrl, '_blank');
+  }
+};
+
 
   const getStatusBadge = status => {
     switch (status) {
@@ -203,6 +203,7 @@ export default function CandidateReview() {
                     className="w-full h-full"
                     style={{ minHeight: '600px' }}
                   />
+
                 </div>
               </div>
             </div>
@@ -354,7 +355,7 @@ export default function CandidateReview() {
                         {getStatusBadge(app.status)}
                       </td>
                       <td className="px-6 py-4">
-                        {app.cv_url ? (
+                        {app.cv_view_url ? (
                           <button
                             onClick={() => handleCvClick(app)}
                             className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-primary-600 bg-primary-50 rounded-lg hover:bg-primary-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors"
