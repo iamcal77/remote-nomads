@@ -45,7 +45,7 @@ export default function JobDetails() {
       setJob(prev => ({ ...prev, hasApplied: true }));
     } catch (error) {
       console.error("Failed to apply:", error);
-      toast.error(error?.message || "Failed to apply for job");
+      toast.error(error?.message || "You have already applied for this job.");
     } finally {
       setApplying(false);
     }

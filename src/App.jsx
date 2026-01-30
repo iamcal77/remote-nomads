@@ -11,6 +11,7 @@ import Home from './pages/Home';
 import { AuthProvider } from './context/AuthContext';
 import JobDetails from './Candidate/JobDetails';
 import Signup from './Auth/SignUp';
+import ApplicationStatusPage from './Candidate/ApplicationStatus';
 
 function App() {
   return (
@@ -43,6 +44,14 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            <Route
+            path='/application-status'
+            element={
+              <ProtectedRoute>
+                <ApplicationStatusPage filter="application-status" />
+              </ProtectedRoute>
+            }
+          />
 
             <Route path="/jobs/:id" element={<JobDetails />} />
 

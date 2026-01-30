@@ -78,7 +78,7 @@ export default function JobsDashboard() {
         job.id === jobId ? { ...job, hasApplied: true } : job
       ));
     } catch (error) {
-      toast.error('Failed to apply for job');
+      toast.error('You have already applied for this job.');
     }
   };
 
@@ -89,7 +89,7 @@ export default function JobsDashboard() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 mt-8">
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold text-gray-900">Find Your Dream Job</h1>

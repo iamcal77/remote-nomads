@@ -2,7 +2,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { 
   Briefcase, User, LogOut, Globe, Menu, X, 
   Home, Search, Bell, MessageSquare, Settings,
-  ChevronDown, Shield, Users as UsersIcon, Building
+  ChevronDown, Shield, Users as UsersIcon, Building,
+  ScalingIcon
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useState } from 'react';
@@ -152,12 +153,12 @@ const handleClick = () => {
                       )}
                       
                       <Link
-                        // to="/settings"
+                        to="/application-status"
                         className="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors"
-                        onClick={handleClick}
+                        onClick={() => setIsProfileMenuOpen(false)}
                       >
-                        <Settings className="h-4 w-4 mr-3" />
-                        Settings
+                        <ScalingIcon className="h-4 w-4 mr-3" />
+                        My Applications
                       </Link>
                     </div>
                     

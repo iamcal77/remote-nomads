@@ -90,6 +90,7 @@ export const updateApplicationStatus = async (id, payload) => {
   return response.json();
 };
 
+
 // Jobs API
 export const getJobs = () => {
   return api.get('/jobs');
@@ -154,3 +155,7 @@ export default api;
 export const updateApplication = (id, data) => {
   return api.put(`/applications/${id}`, data);
 };
+
+export const getApplicationStatus = async () => {
+  return api.get('/applications/candidate/dashboard');
+}
