@@ -24,7 +24,7 @@ export default function ForgotPassword() {
         { email }
       );
 
-      toast.success("Reset link sent to your email!");
+      toast.success("Reset toeken generated successfully.");
 
       if (res.data.reset_token) {
         navigate(
