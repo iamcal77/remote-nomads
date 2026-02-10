@@ -12,6 +12,8 @@ import { AuthProvider } from './context/AuthContext';
 import JobDetails from './Candidate/JobDetails';
 import Signup from './Auth/SignUp';
 import ApplicationStatusPage from './Candidate/ApplicationStatus';
+import ResetPassword from './Auth/ResetPassword';
+import ForgotPassword from './Auth/ForgotPassword';
 
 function App() {
   return (
@@ -23,6 +25,8 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
           </Route>
 
           {/* App pages (WITH navbar) */}
